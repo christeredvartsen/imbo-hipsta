@@ -9,12 +9,8 @@
  */
 
 return array(
-    'imageTransformations' => array(
-        'earlybird' => function (array $params) {
-            return new ImboHipsta\Earlybird();
-        },
-        'inkwell' => function (array $params) {
-            return new ImboHipsta\Inkwell();
-        },
+    'eventListeners' => array(
+        'earlybird' => 'ImboHipsta\Earlybird',
+        'inkwell' => 'ImboHipsta\Inkwell',
     ),
 );
