@@ -10,9 +10,9 @@
 
 namespace ImboHipsta;
 
-use Imbo\Model\Image,
-    Imbo\Exception\TransformationException,
-    Imbo\Image\Transformation\TransformationInterface,
+use Imbo\Exception\TransformationException,
+    Imbo\Image\Transformation\Transformation,
+    Imbo\EventListener\ListenerInterface,
     Imagick,
     ImagickException;
 
@@ -21,26 +21,35 @@ use Imbo\Model\Image,
  *
  * @author Espen Hovlandsdal <espen@hovlandsdal.com>
  */
-class Inkwell extends Transformation implements TransformationInterface {
+class Inkwell extends Transformation implements ListenerInterface {
     /**
      * {@inheritdoc}
      */
-    public function applyToImage(Image $image) {
+    public static function getSubscribedEvents() {
+        return array(
+            'image.transformation.inkwell' => 'transform',
+        );
+    }
+
+    /**
+     * Transform the image
+     *
+     * @param EventInterface $event The event instance
+     */
+    public function transform(EventInterface $event) {
         try {
-            $imagick = $this->getImagick();
-            $imagick->readImageBlob($image->getBlob());
+            $this->imagick->modulateImage(100, 0, 100);
 
-            $imagick->modulateImage(100, 0, 100);
+            $original = clone $this->imagick;
 
-            $overlay = new Imagick();
-            $overlay->newPseudoImage(1, 1000, 'gradient:');
-            $overlay->rotateImage('#fff', 90);
-            $overlay->sigmoidalContrastImage(true, 1.6, 50);
-            $overlay->sigmoidalContrastImage(false, 0.333333333, 0);
+            $this->imagick->clear();
+            $this->imagick->newPseudoImage(1, 1000, 'gradient:');
+            $this->imagick->rotateImage('#fff', 90);
+            $this->imagick->sigmoidalContrastImage(true, 1.6, 50);
+            $this->imagick->sigmoidalContrastImage(false, 0.333333333, 0);
+            $this->imagick->clutImage($original);
 
-            $imagick->clutImage($overlay);
-
-            $image->setBlob($imagick->getImageBlob());
+            $event->getArgument('image')->hasBeenTransformed(true);
         } catch (ImagickException $e) {
             throw new TransformationException($e->getMessage(), 400, $e);
         }
