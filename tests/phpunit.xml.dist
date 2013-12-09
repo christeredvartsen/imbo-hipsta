@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="false" bootstrap="../vendor/autoload.php">
+  <testsuites>
+    <testsuite name="imbohipsta">
+      <directory>ImboHipstaTest</directory>
+    </testsuite>
+  </testsuites>
+
+  <filter>
+    <whitelist addUncoveredFilesFromWhitelist="true">
+      <directory suffix=".php">../library/ImboHipsta</directory>
+    </whitelist>
+  </filter>
+</phpunit>
