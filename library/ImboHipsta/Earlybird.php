@@ -13,6 +13,7 @@ namespace ImboHipsta;
 use Imbo\Exception\TransformationException,
     Imbo\Image\Transformation\Transformation,
     Imbo\EventListener\ListenerInterface,
+    Imbo\EventManager\EventInterface,
     Imagick,
     ImagickException;
 
